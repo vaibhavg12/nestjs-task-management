@@ -10,35 +10,40 @@ import { Task } from './task.entity';
 export class TasksService {
   constructor(
     @InjectRepository(TasksRepository)
-    private tasksRespository: TasksRepository,
+    private tasksRepository: TasksRepository,
   ) {}
 
   getTasks(filterDto: GetTasksFilterDto): Promise<Task[]> {
-    return this.tasksRespository.getTasks(filterDto);
+    return this.tasksRepository.getTasks(filterDto);
   }
 
   async getTaskById(id: string): Promise<Task> {
-    const found = await this.tasksRespository.findOne(id);
-    if (!found) throw new NotFoundException(`Task with ID "${id}" not found`);
+    const found = await this.tasksRepository.findOne(id);
+
+    if (!found) {
+      throw new NotFoundException(`Task with ID "${id}" not found`);
+    }
+
     return found;
   }
 
   createTask(createTaskDto: CreateTaskDto): Promise<Task> {
-    return this.tasksRespository.createTask(createTaskDto);
+    return this.tasksRepository.createTask(createTaskDto);
   }
 
-  async deleteTask(taskId: string): Promise<void> {
-    const result = await this.tasksRespository.delete(taskId);
-    if (result.affected === 0)
-      //because delete returns number of rows deleted {raw: [], affected: }
-      throw new NotFoundException(`Task with ID "${taskId}" not found`);
+  async deleteTask(id: string): Promise<void> {
+    const result = await this.tasksRepository.delete(id);
+
+    if (result.affected === 0) {
+      throw new NotFoundException(`Task with ID "${id}" not found`);
+    }
   }
 
   async updateTaskStatus(id: string, status: TaskStatus): Promise<Task> {
     const task = await this.getTaskById(id);
-    task.status = status;
 
-    await this.tasksRespository.save(task);
+    task.status = status;
+    await this.tasksRepository.save(task);
 
     return task;
   }
