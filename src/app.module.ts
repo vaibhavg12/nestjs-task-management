@@ -14,9 +14,9 @@ import { configValidationSchema } from './config.schema';
     TasksModule,
     TypeOrmModule.forRootAsync({
       // starts the module in async mode i.e. without waiting for configuration or any other call.
-      imports: [ConfigModule],
+      imports: [ConfigModule], 
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
+      useFactory: async (configService: ConfigService) => ({ 
         type: 'postgres',
         autoLoadEntities: true,
         synchronize: true,
